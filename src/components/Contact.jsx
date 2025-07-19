@@ -2,26 +2,22 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
+import { useContactDetails, useDeleteContact } from '../services/tanStack';
 
 export default function Contact() {
   const { contactId } = useParams();
-  const [contact, setContact] = useState();
   const history = useHistory();
 
-  useEffect(() => {
-    axios
-      .get(`https://65b36193770d43aba479a2f2.mockapi.io/users/${contactId}`)
-      .then((res) => {
-        setContact(res.data);
-      });
-  });
+  const useDeleteMutation = useDeleteContact();
+
+  const { isPending, error, data: contact } = useContactDetails(contactId);
+
+  if (isPending) return 'Loading...';
+  if (error) return 'Error occured...!';
 
   const handleDelete = () => {
-    axios
-      .delete(`https://65b36193770d43aba479a2f2.mockapi.io/users/${contactId}`)
-      .then((res) => {
-        history.push('/');
-      });
+    useDeleteMutation.mutate(contactId);
+    history.push('/');
   };
 
   if (!contact) return 'loading';

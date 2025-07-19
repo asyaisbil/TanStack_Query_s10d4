@@ -1,17 +1,16 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+//import { contacts } from '../mocks/data';
+import { useContacts } from '../services/tanStack';
 
 export default function SideBar() {
-  const [contacts, setContacts] = useState([]);
+  const { isPending, isLoading, error, data: contacts } = useContacts();
 
-  useEffect(() => {
-    axios
-      .get('https://65b36193770d43aba479a2f2.mockapi.io/users')
-      .then((res) => {
-        setContacts(res.data);
-      });
-  });
+  if (isPending) return 'Loading...';
+
+  if (error) return 'Error occured...!';
 
   return (
     <div id="sidebar">

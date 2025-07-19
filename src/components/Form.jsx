@@ -2,6 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
+import { useAddContact } from '../services/tanStack';
 
 export default function Form() {
   const history = useHistory();
@@ -11,13 +12,12 @@ export default function Form() {
     formState: { isValid, errors },
   } = useForm({ mode: 'all' });
 
+  const useAddContactMutation = useAddContact();
+
   const handleFormSubmit = (data) => {
     if (!isValid) return;
-    axios
-      .post(`https://65b36193770d43aba479a2f2.mockapi.io/users`, data)
-      .then((res) => {
-        history.push('/');
-      });
+    useAddContactMutation.mutate(data);
+    history.push('/');
   };
 
   return (
